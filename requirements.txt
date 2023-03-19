@@ -7,3 +7,4 @@ requests
 razorpay
 passlib
 python-jose
+python-multipart
