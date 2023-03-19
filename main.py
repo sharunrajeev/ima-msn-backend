@@ -24,7 +24,7 @@ app.add_middleware(
 app.include_router(list_router, tags=["User"])
 app.include_router(payment_router,tags=["Payment"],prefix="/payment")
 
-@app.get("/",tags="Test")
+@app.get("/",tags=["Test"])
 async def test_response():
     return "Api Start"
 @app.on_event("startup")
