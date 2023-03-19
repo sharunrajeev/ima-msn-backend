@@ -1,27 +1,26 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from .models import PaymentModel
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from .database import startup_db_client
 import razorpay
+import os
 
-
+load_dotenv()
 
 
 
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/register/login/")
-config = dotenv_values(".env")
-
-RZR_KEY_SECRET= config['RZR_KEY_SECRET']
-RZR_KEY_ID=config['RZR_KEY_ID']
-MONGO_DB_NAME=config['MONGO_DB_NAME']
-ALGORITHM=config["ALGORITHM"]
-SECRET_KEY= config['SECRET_KEY']
-COLLECTION_NAME=config["COLLECTION_NAME"]
+RZR_KEY_SECRET= os.environ.get('RZR_KEY_SECRET')
+RZR_KEY_ID=os.environ.get('RZR_KEY_ID')
+MONGO_DB_NAME=os.environ.get('MONGO_DB_NAME')
+ALGORITHM=os.environ.get("ALGORITHM")
+SECRET_KEY= os.environ.get('SECRET_KEY')
+COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 
 
 db_helper=startup_db_client()

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 import secrets
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from .models import ParticipantModel,ParticipantModelOut,Token,TokenData,prefLoc
 from passlib.context import CryptContext
 import re
@@ -10,17 +10,17 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from .database import startup_db_client
 from .sendmail import send_mail
+import os
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
-config = dotenv_values(".env")
-
-SECRET_KEY= config['SECRET_KEY']
-MONGO_DB_NAME=config['MONGO_DB_NAME']
-ALGORITHM=config["ALGORITHM"]
-TOKEN_EXPIRES=int(config["TOKEN_EXPIRES"])
-COLLECTION_NAME=config["COLLECTION_NAME"]
+load_dotenv()
+SECRET_KEY= os.environ.get('SECRET_KEY')
+MONGO_DB_NAME=os.environ.get('MONGO_DB_NAME')
+ALGORITHM=os.environ.get("ALGORITHM")
+TOKEN_EXPIRES=int(os.environ.get("TOKEN_EXPIRES"))
+COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 
 
 db_helper=startup_db_client()
@@ -102,7 +102,7 @@ async def get_current_active_user(current_user: ParticipantModel = Depends(get_c
 
 @router.post("/login/", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(config["MONGO_DB_NAME"], form_data.username, form_data.password)
+    user = authenticate_user(os.environ.get("MONGO_DB_NAME"), form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -161,7 +161,7 @@ async def create_list(lists: ParticipantModel = Body(...),):
     created_list_item = user_collection.find_one({
             "_id": new_list_item.inserted_id
         })
-    user = authenticate_user(config["MONGO_DB_NAME"], created_list_item["email_id"], password)
+    user = authenticate_user(os.environ.get("MONGO_DB_NAME"), created_list_item["email_id"], password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

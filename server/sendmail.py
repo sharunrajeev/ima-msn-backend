@@ -1,12 +1,12 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import dotenv_values
-config = dotenv_values(".env")
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 # Set up email parameters
-sender_email = config["MAIL_ID"]
-sender_password = config["MAIL_PASS"]
+sender_email = os.environ.get("MAIL_ID")
+sender_password = os.environ.get("MAIL_PASS")
 
 def send_mail(email_to,user_password,username):
 # Create a message

@@ -1,9 +1,8 @@
 from fastapi import FastAPI
-from dotenv import dotenv_values
 from .routes import router as list_router
 from.payments import router as payment_router
 from .database import shutdown_db_client,startup_db_client
-config = dotenv_values(".env")
+
 
 app = FastAPI()
 

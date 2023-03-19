@@ -1,11 +1,9 @@
 from fastapi import FastAPI
-from dotenv import dotenv_values
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import os
 
 load_dotenv()
-config = dotenv_values(".env")
 
 mongodb_client = MongoClient(os.environ.get("MONGO_URL"))
 
