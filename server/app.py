@@ -8,6 +8,10 @@ app = FastAPI()
 
 app.include_router(list_router, tags=["User"])
 app.include_router(payment_router,tags=["Payment"],prefix="/payment")
+
+@app.get("/")
+async def start_response():
+    return "Api Start"
 @app.on_event("startup")
 def init_db():
     startup_db_client
