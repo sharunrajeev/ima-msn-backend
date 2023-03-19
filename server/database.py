@@ -1,15 +1,19 @@
 from fastapi import FastAPI
 from dotenv import dotenv_values
+from dotenv import load_dotenv
 from pymongo import MongoClient
+import os
 
+load_dotenv()
 config = dotenv_values(".env")
 
-mongodb_client = MongoClient(config["MONGO_URL"])
+mongodb_client = MongoClient(os.environ.get("MONGO_URL"))
 
 
 def startup_db_client():
-    database = mongodb_client[config["MONGO_DB_NAME"]]
+    database = mongodb_client[os.environ.get("MONGO_DB_NAME")]
     print("Connected to the MongoDB database!")
+    print(os.environ.get("MONGO_DB_NAME"))
     return database
 
 
