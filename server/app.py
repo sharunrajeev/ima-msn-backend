@@ -11,6 +11,7 @@ origins = [
     "http://ima-msn-backend-production.up.railway.app",
     "https://ima-msn-backend-production.up.railway.app",
     "http://localhost",
+    "http://0.0.0.0:80"
     "http://localhost:8000",
 ]
 
