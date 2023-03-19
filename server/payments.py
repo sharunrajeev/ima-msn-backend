@@ -2,8 +2,6 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from dotenv import dotenv_values
 from .models import PaymentModel
-import hmac
-import hashlib
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from .database import startup_db_client
