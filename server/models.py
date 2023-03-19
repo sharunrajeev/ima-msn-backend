@@ -26,8 +26,8 @@ class PaymentModel(BaseModel):
 class ParticipantModel(BaseModel):
     name: str = Field(...)
     place: str = Field(...)
-    phone_no: int = Field(default=...)
-    alt_phone_no: int | None = Field(description="optional")
+    phone_no: str = Field(default=...)
+    alt_phone_no: str | None = Field(description="optional")
     email_id: str = Field(...)
     alt_email_id:str | None =Field(description="optional")
     pref_loc:str=Field(...)
@@ -40,8 +40,8 @@ class ParticipantModel(BaseModel):
             "example": {
                 "name": "John Doe",
                 "place":"Thrikkakara",
-                "phone_no":1000000000,
-                "alt_phone_no":9999999999,
+                "phone_no":'1000000000',
+                "alt_phone_no":"9999999999",
                 "email_id": "jdoe@hotmail.com",
                 "alt_email_id": "johndoe@gmail.com",
                 "pref_loc":"Kochi",
@@ -53,8 +53,8 @@ class ParticipantModel(BaseModel):
 class ParticipantModelOut(BaseModel):
     name: str = Field(...)
     place: str = Field(...)
-    phone_no: int = Field(default=...)
-    alt_phone_no: int | None = Field(description="optional")
+    phone_no: str = Field(default=...)
+    alt_phone_no: str | None = Field(description="optional")
     email_id: str = Field(...)
     alt_email_id:str | None =Field(description="optional")
     pref_loc:str=Field(...)
@@ -67,8 +67,8 @@ class ParticipantModelOut(BaseModel):
             "example": {
                 "name": "John Doe",
                 "place":"Thrikkakara",
-                "phone_no":1000000000,
-                "alt_phone_no":9999999999,
+                "phone_no":"1000000000",
+                "alt_phone_no":"9999999999",
                 "email_id": "jdoe@hotmail.com",
                 "alt_email_id": "johndoe@gmail.com",
                 "pref_loc":"Kochi",

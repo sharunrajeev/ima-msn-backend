@@ -147,12 +147,11 @@ async def create_list(lists: ParticipantModel = Body(...),):
         raise HTTPException(status_code=400, detail="The Centre Tvm is Full")
 
    
-    password =f"{str(lists['phone_no'])[-4:]}-{lists['name'][-2:]}-{secrets.token_hex(3)}"
-    reg_no =f"reg-{lists['name'][0:5]}-{secrets.token_hex(2)}"
+    password =str(secrets.token_hex(4))
+    reg_no =f"reg-{lists['name'].replace(' ','')[0:5]}-{secrets.token_hex(2)}"
     lists["password"]=get_password_hash(password)
     lists["reg_no"]=reg_no
-    print(password)
-
+    
     new_list_item = user_collection.insert_one(lists)
     #sending username and password through email
     send_mail(lists['email_id'],password,lists['name'])
@@ -173,13 +172,10 @@ async def create_list(lists: ParticipantModel = Body(...),):
         data={"sub": user.email_id}, expires_delta=access_token_expires
     )
 
-    
-
     return {"username":created_list_item["email_id"],"tokenId":access_token}
 
 @router.get("/centre_count/")
 async def fetch_centre_count():
     kochi=user_collection.count_documents({"pref_loc":prefLoc.ekm})
     tvm=user_collection.count_documents({"pref_loc":prefLoc.tvm})
-
     return {"kochi":kochi,"tvm":tvm}

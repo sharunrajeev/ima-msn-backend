@@ -11,7 +11,6 @@ mongodb_client = MongoClient(os.environ.get("MONGO_URL"))
 def startup_db_client():
     database = mongodb_client[os.environ.get("MONGO_DB_NAME")]
     print("Connected to the MongoDB database!")
-    print(os.environ.get("MONGO_DB_NAME"))
     return database
 
 
