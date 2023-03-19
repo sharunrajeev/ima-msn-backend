@@ -8,10 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "http://ima-msn-backend-production.up.railway.app",
-    "https://ima-msn-backend-production.up.railway.app",
     "http://localhost",
-    "http://0.0.0.0:80",
+    "http://0.0.0.0:8000",
     "http://localhost:8000",
 ]
 
@@ -26,8 +24,8 @@ app.add_middleware(
 app.include_router(list_router, tags=["User"])
 app.include_router(payment_router,tags=["Payment"],prefix="/payment")
 
-@app.get("/")
-async def start_response():
+@app.get("/",tags="Test")
+async def test_response():
     return "Api Start"
 @app.on_event("startup")
 def init_db():
