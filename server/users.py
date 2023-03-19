@@ -13,6 +13,7 @@ from .sendmail import send_mail
 import os
 
 router = APIRouter()
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 load_dotenv()

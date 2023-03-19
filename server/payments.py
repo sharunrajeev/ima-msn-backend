@@ -7,11 +7,9 @@ from jose import JWTError, jwt
 from .database import startup_db_client
 import razorpay
 import os
+from .sendmail import send_mail_link
 
 load_dotenv()
-
-
-
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/register/login/")
@@ -54,7 +52,6 @@ async def payment_initiate(amount,token:str=Depends(decode_token)):
     data = { "amount": amount, "currency": "INR", "receipt": receipt_id}
     payment = razorpay_client.order.create(data=data)
     user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id=payment["id"],status=0))}})
-    print(payment["status"])
     return payment
     
 @router.post("/verify/",description="call on payment success")
@@ -73,6 +70,7 @@ async def payment_verify(razorpay_payment_id,razorpay_signature,token:str=Depend
     except razorpay.errors.SignatureVerificationError as e:
     # Signature verification failed
         raise HTTPException(status_code=400, detail="Invalid Order Signatures")
+    send_mail_link(user["email_id"],user["name"])
     return {"msg","verification successful"}
 
   
