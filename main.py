@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from .routes import router as list_router
-from.payments import router as payment_router
-from .database import shutdown_db_client,startup_db_client
+from .server.routes import router as list_router
+from.server.payments import router as payment_router
+from .server.database import shutdown_db_client,startup_db_client
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -11,7 +11,7 @@ origins = [
     "http://ima-msn-backend-production.up.railway.app",
     "https://ima-msn-backend-production.up.railway.app",
     "http://localhost",
-    "http://0.0.0.0:80"
+    "http://0.0.0.0:80",
     "http://localhost:8000",
 ]
 
