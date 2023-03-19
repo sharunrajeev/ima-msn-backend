@@ -148,7 +148,7 @@ async def create_list(lists: ParticipantModel = Body(...),):
 
    
     password =str(secrets.token_hex(4))
-    reg_no =f"reg-{lists['name'].replace(' ','')[0:5]}-{secrets.token_hex(2)}"
+    reg_no =f"reg-{lists['name'].replace(' ','')[0:min(4,len(lists['name']))]}-{secrets.token_hex(2)}"
     lists["password"]=get_password_hash(password)
     lists["reg_no"]=reg_no
     

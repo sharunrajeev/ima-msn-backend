@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from .server.routes import router as list_router
-from.server.payments import router as payment_router
-from .server.database import shutdown_db_client,startup_db_client
+from server.routes import router as list_router
+from server.payments import router as payment_router
+from server.database import shutdown_db_client,startup_db_client
 from fastapi.middleware.cors import CORSMiddleware
 
 
