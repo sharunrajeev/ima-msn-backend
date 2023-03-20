@@ -45,7 +45,8 @@ def decode_token(token: str=Depends(oauth2_scheme)):
 
 
 @router.get("/initiate/")
-async def payment_initiate(amount,token:str=Depends(decode_token)):
+async def payment_initiate(token:str=Depends(decode_token)):
+    amount=300
     # Replace the values below with your own
     user=user_collection.find_one({"email_id":token})
     receipt_id =f"order-{str(user['phone_no'])[-4:]}-{str(user['name'])[-3:]}-{str(user['_id'])[-3:]}"
@@ -55,7 +56,7 @@ async def payment_initiate(amount,token:str=Depends(decode_token)):
     return payment
     
 @router.post("/verify/",description="call on payment success")
-async def payment_verify(razorpay_payment_id,razorpay_signature,token:str=Depends(decode_token)):
+async def payment_verify(razorpay_payment_id=Body(title="razorpay_payment_id"),razorpay_signature=Body(title="razorpay_signature"),token:str=Depends(decode_token)):
     # Replace the values below with your own
     user=user_collection.find_one({"email_id":token})
     try:

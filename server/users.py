@@ -129,33 +129,31 @@ async def read_participants(username:str=Depends(decode_token)):
 
 
 @router.post("/register/", description='Enter Participant Detail and Call on Form Submit', status_code=status.HTTP_201_CREATED)
-async def create_list(lists: ParticipantModel = Body(...),):
+async def create_list(lists: ParticipantModel=Body(...)):
 
     email_pattern = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-
-
-    lists = jsonable_encoder(lists)
-    
-    if user_collection.find_one({"email_id": lists['email_id']}):
+    print(lists.email_id)
+    if user_collection.find_one({"email_id": lists.email_id}):
         raise HTTPException(status_code=400, detail="User already exists",headers={"X-Error": "Duplicate"})
-    if not email_pattern.match(lists['email_id']):
+    if not email_pattern.match(lists.email_id):
         raise HTTPException(status_code=400, detail="Invalid email address")
-    if not email_pattern.match(lists['alt_email_id']) and  not lists['alt_email_id'] == None:
+    if not email_pattern.match(lists.alt_email_id) and  not lists.alt_email_id == None:
         raise HTTPException(status_code=400, detail="Invalid alternate email address")
-    if  user_collection.count_documents({"pref_loc":prefLoc.ekm})>300 and lists["pref_loc"]==prefLoc.ekm:
+    if  user_collection.count_documents({"pref_loc":prefLoc.ekm})>300 and lists.pref_loc==prefLoc.ekm:
         raise HTTPException(status_code=400, detail="The Centre Kochi is Full")
-    elif user_collection.count_documents({"pref_loc":prefLoc.tvm})>700 and lists["pref_loc"]==prefLoc.tvm:
+    elif user_collection.count_documents({"pref_loc":prefLoc.tvm})>700 and lists.pref_loc==prefLoc.tvm:
         raise HTTPException(status_code=400, detail="The Centre Tvm is Full")
 
    
     password =str(secrets.token_hex(4))
-    reg_no =f"reg-{lists['name'].replace(' ','')[0:min(4,len(lists['name']))]}-{secrets.token_hex(2)}"
-    lists["password"]=get_password_hash(password)
-    lists["reg_no"]=reg_no
+    reg_no =f"reg-{lists.name.replace(' ','')[0:min(4,len(lists.name))]}-{secrets.token_hex(2)}"
+    lists.password=get_password_hash(password)
+    lists.reg_no=reg_no
     
-    new_list_item = user_collection.insert_one(lists)
+    lists_dict=lists.dict()
+    new_list_item = user_collection.insert_one(lists_dict)
     #sending username and password through email
-    send_mail(lists['email_id'],password,lists['name'])
+    send_mail(lists.email_id,password,lists.name)
     #if(response.status_code!=200):
         #raise HTTPException(status_code=500, detail="Unexpected Error Occured",headers={"X-Error": "Unknown"})
     created_list_item = user_collection.find_one({

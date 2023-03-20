@@ -20,7 +20,7 @@ COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 db_helper=startup_db_client()
 user_collection=db_helper[COLLECTION_NAME]
 
-@router.post("/generate/")
+@router.get("/generate/")
 async def convert_to_pdf(token:str=Depends(decode_token)):
   # Convert the data to a dictionary
     user_dict = user_collection.find_one({"email_id": token})
