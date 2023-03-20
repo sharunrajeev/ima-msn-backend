@@ -9,3 +9,4 @@ passlib
 python-jose
 python-multipart
 xhtml2pdf
+jinja2
