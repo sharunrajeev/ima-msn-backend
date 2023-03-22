@@ -65,9 +65,7 @@ app.include_router(pdf_router,tags=["PDF"],prefix="/pdf")
 @app.get("/",tags=["Test"])
 async def test_response():
     return "Api Start"
-@app.on_event("startup")
-def init_db():
-    startup_db_client
+
 
 
 @app.on_event("shutdown")

@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends, HTTPException, status,responses
 from pydantic import BaseModel
 import jinja2
 from .models import ParticipantModelOut
-from .database import startup_db_client
+from .database import database
 import os
 from dotenv import load_dotenv
 from .users import decode_token
@@ -17,8 +17,7 @@ router = APIRouter()
 COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 
 
-db_helper=startup_db_client()
-user_collection=db_helper[COLLECTION_NAME]
+user_collection=database[COLLECTION_NAME]
 
 @router.get("/generate/")
 async def convert_to_pdf(token:str=Depends(decode_token)):

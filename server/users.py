@@ -8,7 +8,7 @@ import re
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from .database import startup_db_client
+from .database import database
 from .sendmail import send_mail
 import os
 
@@ -24,8 +24,7 @@ TOKEN_EXPIRES=int(os.environ.get("TOKEN_EXPIRES"))
 COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 
 
-db_helper=startup_db_client()
-user_collection=db_helper[COLLECTION_NAME]
+user_collection=database[COLLECTION_NAME]
 
 
 def decode_token(token: str = Depends(oauth2_scheme)):

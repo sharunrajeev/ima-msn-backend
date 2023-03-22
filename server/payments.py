@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from .models import PaymentModel
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from .database import startup_db_client
+from .database import database
 import razorpay
 import os
 from .sendmail import send_mail_link
@@ -21,11 +21,11 @@ SECRET_KEY= os.environ.get('SECRET_KEY')
 COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 
 
-db_helper=startup_db_client()
-user_collection=db_helper[COLLECTION_NAME]
+user_collection=database[COLLECTION_NAME]
 
 
 razorpay_client = razorpay.Client(auth=(RZR_KEY_ID, RZR_KEY_SECRET))
+razorpay_client.set_app_details({"title" : "IMA MSN", "version" : "0.5.0"})
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 

@@ -20,7 +20,7 @@ class PaymentModel(BaseModel):
                 "order_id": "order_9A33XWu170gUtm",
                 "pay_id": "pay_29QQoUBi66xm2f",
                 "signature": "9ef4dffbfd84f1318f6739a3ce19f9d85851857ae648f114332d8401e0949a3d",
-                "status":1
+                "status":0
             }
         }
 class ParticipantModel(BaseModel):
@@ -31,7 +31,10 @@ class ParticipantModel(BaseModel):
     email_id: str = Field(...)
     alt_email_id:str | None =Field(description="optional")
     pref_loc:str=Field(...)
-    transac:PaymentModel|None=None
+    transac:PaymentModel=Field(default={"order_id": "",
+                "pay_id": "",
+                "signature": "",
+                "status":0})
     reg_no:str|None=None
     password:str |None= None
 
