@@ -46,7 +46,7 @@ def decode_token(token: str=Depends(oauth2_scheme)):
 
 @router.get("/initiate/")
 async def payment_initiate(token:str=Depends(decode_token)):
-    amount=300
+    amount=30000
     # Replace the values below with your own
     user=user_collection.find_one({"email_id":token})
     receipt_id =f"order-{str(user['phone_no'])[-4:]}-{str(user['name'])[-3:]}-{str(user['_id'])[-3:]}"

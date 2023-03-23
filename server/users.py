@@ -170,7 +170,7 @@ async def create_list(lists: ParticipantModel=Body(...)):
         data={"sub": user.email_id}, expires_delta=access_token_expires
     )
 
-    return {"username":created_list_item["email_id"],"tokenId":access_token}
+    return {"username":created_list_item["email_id"],"access_token":access_token}
 
 @router.get("/centre_count/")
 async def fetch_centre_count():
