@@ -4,7 +4,7 @@ from server.payments import router as payment_router
 from server.gen_pdf import router as pdf_router
 from server.database import shutdown_db_client,startup_db_client
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.staticfiles import StaticFiles
 
 description = """## Users
 
@@ -61,6 +61,7 @@ description="""You will be able to:
 app.include_router(list_router, tags=["User"])
 app.include_router(payment_router,tags=["Payment"],prefix="/payment")
 app.include_router(pdf_router,tags=["PDF"],prefix="/pdf")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/",tags=["Test"])
 async def test_response():

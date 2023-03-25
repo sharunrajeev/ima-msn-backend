@@ -3,10 +3,40 @@
 <head>
 	<meta charset="UTF-8">
 	<title>PDF Template</title>
+	<style>
+		*{
+			padding: 0px;
+			margin: 0px;
+			font-family: sans-serif;
+		}
+		p{
+			font-size: 14px;
+			margin-top: 16px;
+		}
+		div{
+			padding: 28px;
+		}
+	</style>
+
+
 </head>
 <body>
-	<h1>Name: {{ name }}</h1>
-	<p>Email: {{ email_id }}</p>
-	<p>Reg No: {{reg_no}}</p>
+	<div style="text-align: center; background-color: aliceblue;"><h2>IMA - MSN</h2></div>
+	<div>
+	<h2><b>Reg No:</b> {{reg_no}}</h2>
+	<p><b>Name:</b> {{ name }}</p>
+	<p><b>Address:</b> {{place}}</p>
+	<p><b>Email:</b> {{ email_id }}</p>
+	<p><b>Phone:</b> {{ phone_no }}</p>
+	</div>
+
+	<div style="border-radius: 10px; border: 1px solid gray;margin: 24px;">
+		<h3>Venue & Time</h2>
+		<p>Venue: {{pref_loc}}</p>
+		<P>Time: 8.00am</p>
+		<img src="{{ url_for('static', path='images/ekm_qr.png') }}" alt="qr code"/>
+		
+		</div>
+
 </body>
 </html>
