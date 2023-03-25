@@ -20,6 +20,30 @@ COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
 user_collection=database[COLLECTION_NAME]
 
 
+class PDF(FPDF):
+    def header(self):
+        # Logo
+       # self.image('./static/images/ekm_qr.png', 10, 8, 20)
+        # Arial bold 15
+        self.set_font('Arial', 'B', 20)
+        # Move to the right
+        self.cell(80)
+        # Title
+        self.cell(40, 15, 'IMA MSN', 1, 0, 'C')
+
+        # Line break
+        self.ln(20)
+
+    # Page footer
+    def footer(self):
+        # Position at 1.5 cm from bottom
+        self.set_y(-15)
+        # Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Page number
+        self.cell(0, 10, 'Page ' + str(self.page_no()) , 0, 0, 'C')
+
+
 @router.get("/generate/")
 async def convert_to_pdf(token:str=Depends(decode_token)):
   # Convert the data to a dictionary
@@ -30,9 +54,6 @@ async def convert_to_pdf(token:str=Depends(decode_token)):
 
 
     user_dict = user_collection.find_one({"email_id": token})
-    map_embed = {
-    "map": template_path+"ekm-qr.png" if user_dict["pref_loc"]=="Kochi" else template_path+"tvm-qr.png",
-    }  
   #   jinja_env = Environment(loader=FileSystemLoader(template_path))
   #   jinja_env.globals.update(map_embed)
   #   # Render the HTML template with the data using Jinja2
@@ -63,39 +84,41 @@ async def convert_to_pdf(token:str=Depends(decode_token)):
 
   #   # Return the response
   
-    pdf = FPDF()
+    pdf = PDF('P', 'mm', 'A4')
 
     # Add a page
     pdf.add_page()
 
     # Set font and font size
-    pdf.set_font("Arial", size=20)
-
     # Add image to center of page
-    pdf.image("./static/images/ekm_qr.png" if user_dict["pref_loc"]=="Kochi" else "./static/images/tvm_qr.png"  , x=pdf.w / 2 - 50, y=pdf.h / 2 - 50, w=50)
-
+    pdf.image("./static/images/ekm_qr.png" if user_dict["pref_loc"]=="Kochi" else "./static/images/tvm_qr.png"  , x=10, y=pdf.h- 140, w=30)
     # Add text to page
-    pdf.cell(0, 20, "IMA MSN",align="C")
-    pdf.ln(10)
     # Add fields to page
-    pdf.set_font("Arial", size=16)
-
+    pdf.set_font("Arial", "B",size=16)
+    pdf.line(10, 30, 200, 30)
     pdf.cell(100, 20, f"Reg No: {user_dict['reg_no']}", align="L")
+    pdf.line(10, 50, 200, 50)
     pdf.set_font("Arial", size=12)
-    pdf.ln(10)
+   
+    pdf.ln(20)
 
     pdf.cell(100, 20, f"Name: {user_dict['name']}", align="L")
     pdf.ln(10)
     pdf.cell(100, 20, f"Place: {user_dict['place']}", align="L")
     pdf.ln(10)
-
+    pdf.cell(100, 20, f"Phone: {user_dict['phone_no']}", align="L")
+    pdf.ln(10)
+    pdf.cell(100, 20, f"Email: {user_dict['email_id']}", align="L")
+    pdf.ln(10)
     pdf.cell(100, 20, f"Venue: {user_dict['pref_loc']}", align="L")
     pdf.ln(10)
 
     pdf.cell(100, 20, "Time: 8.00am", align="L")
     pdf.ln(10)
-
-
+    pdf.ln(10)
+    pdf.ln(10)
+    pdf.ln(10)
+    pdf.cell(100, 20, "Scan the QR Code for Location", align="L")
 
 
     # Create a byte stream buffer to hold the PDF data
