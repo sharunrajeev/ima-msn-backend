@@ -74,6 +74,23 @@ async def payment_verify(razorpay_payment_id=Body(title="razorpay_payment_id"),r
     send_mail_link(user["email_id"],user["name"])
     return {"msg","verification successful"}
 
+@router.post("/manual_verify/")
+async def payment_verify(email_id:str=Body(title="email_id"),token:str=Depends(decode_token)):
+    # Replace the values below with your own
+    if(token!="gokulkrishna.gk32@gmail.com"):
+       return {"msg","User Not Authorized"}
+    user=user_collection.find_one({"email_id":token})
+    try:
+
+        user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id="manual",status=1))}})
+
+    # Signature verification successful
+    except razorpay.errors.SignatureVerificationError as e:
+    # Signature verification failed
+        raise HTTPException(status_code=400, detail="Invalid Order Signatures")
+    send_mail_link(user["email_id"],user["name"])
+    return {"msg","verification successful"}
+
   
 
 

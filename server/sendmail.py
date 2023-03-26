@@ -51,7 +51,7 @@ def send_mail_link(email_to,username):
     message['Subject'] = 'Cognosco login credentials'
 
     # Add the username and password to the message
-    body = f'Dear {username}\Your Payment has been verified\nLeave join the whatsapp group through the link given below.\nhttps://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS'
+    body = f'Dear {username}\nYour Payment has been verified\nJoin the whatsapp group through the link given below.\nhttps://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS'
     message.attach(MIMEText(body, 'plain'))
 
     # Send the email
