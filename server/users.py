@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from .database import database
-from .sendmail import send_mail
+from .sendmail import send_mail,send_mail_reset
 import os
 
 router = APIRouter()
@@ -126,10 +126,20 @@ async def read_participants(username:str=Depends(decode_token)):
     users=user_collection.find()
     return list(users)
 
+@router.post("/reset_pass/")
+async def reset_user_password(email_id=Body(title="email_id",description="user email id")):
+    if user_collection.find_one({"email_id": email_id}):
+        password =str(secrets.token_hex(4))
+        user_collection.update_one({"email_id":email_id},{"$set":{"password":get_password_hash(password)}})
+        send_mail_reset(email_id,password)
+    else:
+        return {"message":"User Does not Exist"}
+    return {"message":"Password has been successfully reset"}
+
+        
 
 @router.post("/register/", description='Enter Participant Detail and Call on Form Submit', status_code=status.HTTP_201_CREATED)
 async def create_list(lists: ParticipantModel=Body(...)):
-
     email_pattern = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
     print(lists.email_id)
     if user_collection.find_one({"email_id": lists.email_id}):

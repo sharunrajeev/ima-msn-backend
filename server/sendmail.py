@@ -25,6 +25,23 @@ def send_mail(email_to,user_password,username):
         server.login(sender_email, sender_password)
         text = message.as_string()
         server.sendmail(sender_email, email_to, text)
+def send_mail_reset(email_to,user_password):
+# Create a message
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = email_to
+    message['Subject'] = 'IMA-MSN Registration Password Reset'
+
+    # Add the username and password to the message
+    body = f'Dear User\nYour new password is {user_password}.'
+    message.attach(MIMEText(body, 'plain'))
+
+    # Send the email
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, email_to, text)
 
 def send_mail_link(email_to,username):
 # Create a message
