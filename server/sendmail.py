@@ -13,7 +13,7 @@ def send_mail(email_to,user_password,username):
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = email_to
-    message['Subject'] = 'IMA-MSN login credentials'
+    message['Subject'] = 'Cognosco login credentials'
 
     # Add the username and password to the message
     body = f'Dear {username}\nYour username is {email_to} and \nyour password is {user_password}.'
@@ -30,7 +30,7 @@ def send_mail_reset(email_to,user_password):
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = email_to
-    message['Subject'] = 'IMA-MSN Registration Password Reset'
+    message['Subject'] = 'Cognosco Registration Password Reset'
 
     # Add the username and password to the message
     body = f'Dear User\nYour new password is {user_password}.'
@@ -48,10 +48,10 @@ def send_mail_link(email_to,username):
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = email_to
-    message['Subject'] = 'IMA-MSN login credentials'
+    message['Subject'] = 'Cognosco login credentials'
 
     # Add the username and password to the message
-    body = f'Dear {username}\nLeave join the whatsapp group through the link given below.'
+    body = f'Dear {username}\Your Payment has been verified\nLeave join the whatsapp group through the link given below.\nhttps://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS'
     message.attach(MIMEText(body, 'plain'))
 
     # Send the email

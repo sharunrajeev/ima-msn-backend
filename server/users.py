@@ -148,9 +148,9 @@ async def create_list(lists: ParticipantModel=Body(...)):
         raise HTTPException(status_code=400, detail="Invalid email address")
     if not email_pattern.match(lists.alt_email_id) and  not lists.alt_email_id == None:
         raise HTTPException(status_code=400, detail="Invalid alternate email address")
-    if  user_collection.count_documents({"pref_loc":prefLoc.ekm})>300 and lists.pref_loc==prefLoc.ekm:
+    if  user_collection.count_documents({"pref_loc":prefLoc.ekm})>250 and lists.pref_loc==prefLoc.ekm:
         raise HTTPException(status_code=400, detail="The Centre Kochi is Full")
-    elif user_collection.count_documents({"pref_loc":prefLoc.tvm})>700 and lists.pref_loc==prefLoc.tvm:
+    elif user_collection.count_documents({"pref_loc":prefLoc.tvm})>500 and lists.pref_loc==prefLoc.tvm:
         raise HTTPException(status_code=400, detail="The Centre Tvm is Full")
 
    

@@ -29,7 +29,7 @@ class PDF(FPDF):
         # Move to the right
         self.cell(80)
         # Title
-        self.cell(40, 15, 'IMA MSN', 1, 0, 'C')
+        self.cell(40, 15, 'Cognosco', 1, 0, 'C')
 
         # Line break
         self.ln(20)
