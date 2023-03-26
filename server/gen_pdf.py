@@ -92,6 +92,9 @@ async def convert_to_pdf(token:str=Depends(decode_token)):
     # Set font and font size
     # Add image to center of page
     pdf.image("./static/images/ekm_qr.png" if user_dict["pref_loc"]=="Kochi" else "./static/images/tvm_qr.png"  , x=10, y=pdf.h- 140, w=30)
+    pdf.image("./static/images/cognosco.png", x=10, y=10, h=10)
+    pdf.image("./static/images/ima_msn.png", x=pdf.w-30, y=10, h=15)
+
     # Add text to page
     # Add fields to page
     pdf.set_font("Arial", "B",size=16)
