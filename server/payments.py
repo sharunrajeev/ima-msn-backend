@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status,File,UploadFile
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 from .models import PaymentModel
@@ -6,7 +6,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from .database import database
 import razorpay
-import os
+import os,base64
+from bson.binary import Binary
 from .sendmail import send_mail_link
 
 load_dotenv()
@@ -19,7 +20,7 @@ MONGO_DB_NAME=os.environ.get('MONGO_DB_NAME')
 ALGORITHM=os.environ.get("ALGORITHM")
 SECRET_KEY= os.environ.get('SECRET_KEY')
 COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
-
+MAIL_ID=os.environ.get("MAIL_ID")
 
 user_collection=database[COLLECTION_NAME]
 
@@ -52,7 +53,7 @@ async def payment_initiate(token:str=Depends(decode_token)):
     receipt_id =f"order-{str(user['phone_no'])[-4:]}-{str(user['name'])[-3:]}-{str(user['_id'])[-3:]}"
     data = { "amount": amount, "currency": "INR", "receipt": receipt_id}
     payment = razorpay_client.order.create(data=data)
-    user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id=payment["id"],status=0))}})
+    user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id=payment["id"]))}})
     return payment
     
 @router.post("/verify/",description="call on payment success")
@@ -65,7 +66,7 @@ async def payment_verify(razorpay_payment_id=Body(title="razorpay_payment_id"),r
             'razorpay_payment_id': razorpay_payment_id,
             'razorpay_signature': razorpay_signature
         })
-        user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id=user["transac"]["order_id"],status=1,pay_id=razorpay_payment_id,signature=razorpay_signature))}})
+        user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id=user["transac"]["order_id"],pay_id=razorpay_payment_id,signature=razorpay_signature))}})
 
     # Signature verification successful
     except razorpay.errors.SignatureVerificationError as e:
@@ -73,23 +74,32 @@ async def payment_verify(razorpay_payment_id=Body(title="razorpay_payment_id"),r
         raise HTTPException(status_code=400, detail="Invalid Order Signatures")
     send_mail_link(user["email_id"],user["name"])
     return {"msg","verification successful"}
+
 
 @router.post("/manual_verify/")
 async def payment_verify(email_id:str=Body(title="email_id"),token:str=Depends(decode_token)):
     # Replace the values below with your own
-    if(token!="gokulkrishna.gk32@gmail.com"):
-       return {"msg","User Not Authorized"}
-    user=user_collection.find_one({"email_id":token})
-    try:
-
-        user_collection.update_one({"email_id":token},{"$set":{"transac":jsonable_encoder(PaymentModel(order_id="manual",status=1))}})
-
-    # Signature verification successful
-    except razorpay.errors.SignatureVerificationError as e:
-    # Signature verification failed
-        raise HTTPException(status_code=400, detail="Invalid Order Signatures")
+    if token != MAIL_ID:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Not Authorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user=user_collection.find_one({"email_id":email_id})
+    user_collection.update_one({"email_id":email_id},{"$set":{"status":1}})
     send_mail_link(user["email_id"],user["name"])
-    return {"msg","verification successful"}
+    return {"msg":"verification successful"}
+    
+
+@router.post("/upload_upi/")
+async def upload_upi(file:UploadFile=File(...,title="Image"),token:str=Depends(decode_token)):
+    if user_collection.find_one({"email_id": token}):
+        baseEncoded=base64.b64encode(await file.read())
+        user_collection.update_one({"email_id":token},{"$set":{"upi":Binary(baseEncoded)}})
+    else:
+        return {"message":"User Does not Exist"}
+    
+    return {"msg":"UPI img successfully uploaded"}
 
   
 
