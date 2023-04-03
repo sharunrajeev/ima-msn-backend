@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 import secrets
 from dotenv import load_dotenv
-from .models import ParticipantModel,ParticipantModelOut,Token,TokenData,prefLoc
+from .models import ParticipantModel,ParticipantModelOut,ParticipantModelLite,Token,TokenData,prefLoc
 from passlib.context import CryptContext
 import re
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -22,6 +22,7 @@ MONGO_DB_NAME=os.environ.get('MONGO_DB_NAME')
 ALGORITHM=os.environ.get("ALGORITHM")
 TOKEN_EXPIRES=int(os.environ.get("TOKEN_EXPIRES"))
 COLLECTION_NAME=os.environ.get("COLLECTION_NAME")
+MAIL_ID=os.environ.get("MAIL_ID")
 
 
 user_collection=database[COLLECTION_NAME]
@@ -121,11 +122,40 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 async def read_users_me(current_user: ParticipantModel = Depends(get_current_active_user)):
     return current_user
 
-@router.get("/participants/",response_model=list[ParticipantModelOut],description="list_participants")
+@router.get("/participants/",description="list all participants",response_model=list[ParticipantModelLite])
 async def read_participants(username:str=Depends(decode_token)):
+    if username != MAIL_ID:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Not Authorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     users=user_collection.find()
     return list(users)
 
+@router.get("/unverified_participants/",description="list unverified participants",response_model=list[ParticipantModelLite])
+async def read_unverified_participants(username:str=Depends(decode_token)):
+    if username != MAIL_ID:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Not Authorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    users=user_collection.find({"status":0})
+    return list(users)
+
+@router.post("/user_details/",response_model=ParticipantModelOut)
+async def get_user_details(email_id:str=Body(title="email_id"),token:str=Depends(decode_token)):
+    # Replace the values below with your own
+    if token != MAIL_ID:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Not Authorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user=user_collection.find_one({"email_id":email_id})
+    return user
+    
 @router.post("/reset_pass/")
 async def reset_user_password(email_id=Body(title="email_id",description="user email id")):
     if user_collection.find_one({"email_id": email_id}):
