@@ -126,8 +126,8 @@ async def read_users_me(current_user: ParticipantModel = Depends(get_current_act
     return current_user
 
 
-@router.get("/participants/", description="list all participants", response_model=list[ParticipantModelLite])
-async def read_participants(username: str = Depends(decode_token)):
+@router.get("/participants/all/",tags={"Particpants"}, description="list all participants", response_model=list[ParticipantModelLite])
+async def read_all_participants(username: str = Depends(decode_token)):
     if username != MAIL_ID:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -138,7 +138,7 @@ async def read_participants(username: str = Depends(decode_token)):
     return list(users)
 
 
-@router.get("/unverified_participants/", description="list unverified participants", response_model=list[ParticipantModelLite])
+@router.get("/participants/pending_verificaton/", tags={"Particpants"},description="list participants pending for verification", response_model=list[ParticipantModelLite])
 async def read_unverified_participants(username: str = Depends(decode_token)):
     if username != MAIL_ID:
         raise HTTPException(
@@ -146,7 +146,18 @@ async def read_unverified_participants(username: str = Depends(decode_token)):
             detail="User Not Authorized",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    users = user_collection.find({"status": 0})
+    users = user_collection.find({"status": 0,"upi":{'$ne': None}})
+    return list(users)
+
+@router.get("/participants/pending_payment/",tags={"Particpants"}, description="list registered participants without doing payment", response_model=list[ParticipantModelLite])
+async def read_registered_participants(username: str = Depends(decode_token)):
+    if username != MAIL_ID:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Not Authorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    users = user_collection.find({"status": 0,"upi":None})
     return list(users)
 
 
