@@ -60,3 +60,21 @@ def send_mail_link(email_to,username):
         server.login(sender_email, sender_password)
         text = message.as_string()
         server.sendmail(sender_email, email_to, text)
+
+def send_mail_reject(email_to,username):
+# Create a message
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = email_to
+    message['Subject'] = 'Cognosco Application Rejected'
+
+    # Add the username and password to the message
+    body = f'Dear {username}\nYour Application for Cognosco 2023 has been rejected as we were not able to verify your payment. If interested kindly register again and upload your details '
+    message.attach(MIMEText(body, 'plain'))
+
+    # Send the email
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, email_to, text)
