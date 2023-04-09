@@ -32,7 +32,7 @@ You will be able to:
 app = FastAPI(
     title="IMA MSN API",
     description=description,
-    version="0.5.0",
+    version="1.2.0",
 )
 
 
