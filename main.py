@@ -42,6 +42,7 @@ origins = [
     "https://railway-gilt.vercel.app",
     "https://cognoscotvm.azurewebsites.net",
     "http://localhost:8000",
+    "104.196.232.237:443"
 ]
 
 app.add_middleware(
