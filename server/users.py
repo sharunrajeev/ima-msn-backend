@@ -213,7 +213,7 @@ async def create_list(lists: ParticipantModel = Body(...)):
                             "X-Error": "Duplicate"})
     if not email_pattern.match(lists.email_id):
         raise HTTPException(status_code=400, detail="Invalid email address")
-    if not email_pattern.match(lists.alt_email_id) and not lists.alt_email_id == None:
+    if not email_pattern.match(lists.alt_email_id) and not lists.alt_email_id == "":
         raise HTTPException(
             status_code=400, detail="Invalid alternate email address")
     if user_collection.count_documents({"pref_loc": prefLoc.ekm}) > 250 and lists.pref_loc == prefLoc.ekm:

@@ -37,14 +37,16 @@ app = FastAPI(
 
 
 origins = [
-    "http://localhost",
-    "http://0.0.0.0:8000",
+    "http://localhost:3000",
+    "https://cognosco.vercel.app",
+    "https://railway-gilt.vercel.app",
+    "https://cognoscotvm.azurewebsites.net",
     "http://localhost:8000",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
