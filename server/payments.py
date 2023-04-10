@@ -96,16 +96,15 @@ async def payment_verify(email_id:str=Body(title="email_id"),token:str=Depends(d
 async def upload_upi_img(file:UploadFile=File(...),token:str=Depends(decode_token)):
     if user_collection.find_one({"email_id": token}):
         
-        # img=Image.open(io.BytesIO(await file.read()))
-        # max_width = 300
-        # if img.width > max_width:
-        #     ratio = max_width / img.width
-        #     new_height = int(img.height * ratio)
-        #     img = img.resize((max_width, new_height))
-        # with io.BytesIO() as buffer:
-        #     img.save(buffer, format="JPEG", optimize=True, quality=45)
-        #     baseEncoded = base64.b64encode(buffer.getvalue())
-        baseEncoded = base64.b64encode(await file.read())
+        img=Image.open(io.BytesIO(await file.read()))
+        max_width = 300
+        if img.width > max_width:
+            ratio = max_width / img.width
+            new_height = int(img.height * ratio)
+            img = img.resize((max_width, new_height))
+        with io.BytesIO() as buffer:
+            img.save(buffer, format="JPEG", optimize=True, quality=45)
+            baseEncoded = base64.b64encode(buffer.getvalue())
         user_collection.update_one({"email_id":token},{"$set":{"upi":Binary(baseEncoded)}})
     else:
         return {"message":"User Does not Exist"}
