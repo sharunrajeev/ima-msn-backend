@@ -16,7 +16,7 @@ def send_mail(email_to,user_password,username):
     message['Subject'] = 'Cognosco login credentials'
 
     # Add the username and password to the message
-    body = f'Dear {username}\nYour username is {email_to} and \nyour password is {user_password}.'
+    body = f'Dear {username}\nYour username is {email_to} and \nyour password is {user_password}'
     message.attach(MIMEText(body, 'plain'))
 
     # Send the email
@@ -33,7 +33,7 @@ def send_mail_reset(email_to,user_password):
     message['Subject'] = 'Cognosco Registration Password Reset'
 
     # Add the username and password to the message
-    body = f'Dear User\nYour new password is {user_password}.'
+    body = f'Dear User\nYour new password is {user_password}'
     message.attach(MIMEText(body, 'plain'))
 
     # Send the email
