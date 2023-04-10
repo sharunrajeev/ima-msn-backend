@@ -6,8 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from .database import database
 import razorpay
-import os,base64
+import os,base64,io
 from bson.binary import Binary
+from PIL import Image
 from .sendmail import send_mail_link
 
 load_dotenv()
@@ -92,9 +93,18 @@ async def payment_verify(email_id:str=Body(title="email_id"),token:str=Depends(d
     
 
 @router.post("/upload_upi/")
-async def upload_upi(file:UploadFile=File(...,title="Image"),token:str=Depends(decode_token)):
+async def upload_upi_img(file:UploadFile=File(...),token:str=Depends(decode_token)):
     if user_collection.find_one({"email_id": token}):
-        baseEncoded=base64.b64encode(await file.read())
+        
+        img=Image.open(io.BytesIO(await file.read()))
+        max_width = 300
+        if img.width > max_width:
+            ratio = max_width / img.width
+            new_height = int(img.height * ratio)
+            img = img.resize((max_width, new_height))
+        with io.BytesIO() as buffer:
+            img.save(buffer, format="JPEG", optimize=True, quality=45)
+            baseEncoded = base64.b64encode(buffer.getvalue())
         user_collection.update_one({"email_id":token},{"$set":{"upi":Binary(baseEncoded)}})
     else:
         return {"message":"User Does not Exist"}

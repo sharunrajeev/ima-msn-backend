@@ -6,6 +6,7 @@ from enum import Enum
 class prefLoc(str, Enum):
     ekm = "Kochi",
     tvm = "Trivandrum"
+    kzh = "Kozhikode"
 
 
 class PaymentModel(BaseModel):
