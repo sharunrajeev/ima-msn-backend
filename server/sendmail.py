@@ -3,6 +3,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 import os
+from .models import prefLoc
+
 load_dotenv()
 # Set up email parameters
 sender_email = os.environ.get("MAIL_ID")
@@ -43,7 +45,7 @@ def send_mail_reset(email_to,user_password):
         text = message.as_string()
         server.sendmail(sender_email, email_to, text)
 
-def send_mail_link(email_to,username):
+def send_mail_link(email_to,username,loc):
 # Create a message
     message = MIMEMultipart()
     message['From'] = sender_email
@@ -51,7 +53,7 @@ def send_mail_link(email_to,username):
     message['Subject'] = 'Cognosco login credentials'
 
     # Add the username and password to the message
-    body = f'Dear {username}\nYour Payment has been verified\nJoin the whatsapp group through the link given below.\nhttps://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS'
+    body = f'Dear {username}\nYour Payment has been verified\nJoin the whatsapp group through the link given below.\n{"https://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS" if loc==prefLoc.ekm else( "https://chat.whatsapp.com/CZYCPnbIYW39Kmkj3Zehsv" if loc==prefLoc.tvm else "https://chat.whatsapp.com/BwY2rRowvL10ZCIlrU2f9i") }'
     message.attach(MIMEText(body, 'plain'))
 
     # Send the email

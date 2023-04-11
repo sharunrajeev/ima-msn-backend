@@ -73,7 +73,7 @@ async def payment_verify(razorpay_payment_id=Body(title="razorpay_payment_id"),r
     except razorpay.errors.SignatureVerificationError as e:
     # Signature verification failed
         raise HTTPException(status_code=400, detail="Invalid Order Signatures")
-    send_mail_link(user["email_id"],user["name"])
+    # send_mail_link(user["email_id"],user["name"])
     return {"msg","verification successful"}
 
 
@@ -88,7 +88,7 @@ async def payment_verify(email_id:str=Body(title="email_id"),token:str=Depends(d
         )
     user=user_collection.find_one({"email_id":email_id})
     user_collection.update_one({"email_id":email_id},{"$set":{"status":1}})
-    send_mail_link(user["email_id"],user["name"])
+    send_mail_link(user["email_id"],user["name"],user["pref_loc"])
     return {"msg":"verification successful"}
     
 
