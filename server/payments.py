@@ -78,7 +78,7 @@ async def payment_verify(razorpay_payment_id=Body(title="razorpay_payment_id"),r
 
 
 @router.post("/manual_verify/")
-async def payment_verify(email_id:str=Body(title="email_id"),token:str=Depends(decode_token)):
+async def payment_verify(email_id=Body(title="email_id"),token:str=Depends(decode_token)):
     # Replace the values below with your own
     if token != MAIL_ID:
         raise HTTPException(
