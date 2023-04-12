@@ -220,7 +220,7 @@ async def create_list(lists: ParticipantModel = Body(...)):
         raise HTTPException(status_code=400, detail="The Centre Kochi is Full")
     elif user_collection.count_documents({"pref_loc": prefLoc.tvm}) > 500 and lists.pref_loc == prefLoc.tvm:
         raise HTTPException(status_code=400, detail="The Centre Tvm is Full")
-    elif user_collection.count_documents({"pref_loc": prefLoc.kzh}) > 300 and lists.pref_loc == prefLoc.kzh:
+    elif user_collection.count_documents({"pref_loc": prefLoc.kzh}) > 250 and lists.pref_loc == prefLoc.kzh:
         raise HTTPException(status_code=400, detail="The Centre Kzh is Full")
 
     password = str(secrets.token_hex(4))
