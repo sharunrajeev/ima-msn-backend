@@ -252,10 +252,19 @@ async def create_list(lists: ParticipantModel = Body(...)):
 
     return {"username": created_list_item["email_id"], "access_token": access_token}
 
-
 @router.get("/centre_count/")
 async def fetch_centre_count():
     kochi = user_collection.count_documents({"pref_loc": prefLoc.ekm})
     tvm = user_collection.count_documents({"pref_loc": prefLoc.tvm})
     kzh = user_collection.count_documents({"pref_loc": prefLoc.kzh})
     return {"kochi": kochi, "tvm": tvm,"kzh":kzh}
+
+
+@router.get("/centre_count/{loc}")
+async def fetch_centre_count(loc):
+    loc= prefLoc.ekm if loc[0:5].lower()=="kochi" else(prefLoc.tvm if loc[0].lower()=="t" else prefLoc.kzh)
+    noOfReg = user_collection.count_documents({"pref_loc":loc})
+    noOfPaid = user_collection.count_documents({"pref_loc": loc,"status":1})
+    noOfPendingPay=user_collection.count_documents({"pref_loc": loc,"status":0,"upi":None})
+    noOfPendingVer = user_collection.count_documents({"pref_loc": loc,"status":0,"upi":{'$ne': None}})
+    return {"loc":loc,"No of Registrations": noOfReg, "No of Paid Users": noOfPaid,"No of Pending Payment":noOfPendingPay,"No of Pending Payment Verification":noOfPendingVer}
