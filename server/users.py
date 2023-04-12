@@ -261,7 +261,7 @@ async def fetch_centre_count():
 
 
 @router.get("/centre_count/{loc}")
-async def fetch_centre_count(loc):
+async def get_centre_details(loc):
     loc= prefLoc.ekm if loc[0:5].lower()=="kochi" else(prefLoc.tvm if loc[0].lower()=="t" else prefLoc.kzh)
     noOfReg = user_collection.count_documents({"pref_loc":loc})
     noOfPaid = user_collection.count_documents({"pref_loc": loc,"status":1})
