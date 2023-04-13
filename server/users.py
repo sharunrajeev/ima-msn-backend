@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status,Response
 from fastapi.encoders import jsonable_encoder
-import secrets
+import secrets,json,pandas
 from dotenv import load_dotenv
 from .models import ParticipantModel, ParticipantModelOut, ParticipantModelLite, Token, TokenData, prefLoc
 from passlib.context import CryptContext
@@ -252,7 +252,7 @@ async def create_list(lists: ParticipantModel = Body(...)):
 
     return {"username": created_list_item["email_id"], "access_token": access_token}
 
-@router.get("/centre_count/")
+@router.get("/centre_count/",tags={"Admin"})
 async def fetch_centre_count():
     kochi = user_collection.count_documents({"pref_loc": prefLoc.ekm})
     tvm = user_collection.count_documents({"pref_loc": prefLoc.tvm})
@@ -260,7 +260,7 @@ async def fetch_centre_count():
     return {"kochi": kochi, "tvm": tvm,"kzh":kzh}
 
 
-@router.get("/centre_count/{loc}")
+@router.get("/centre_count/{loc}",tags={"Admin"})
 async def get_centre_details(loc):
     loc= prefLoc.ekm if loc[0:5].lower()=="kochi" else(prefLoc.tvm if loc[0].lower()=="t" else prefLoc.kzh)
     noOfReg = user_collection.count_documents({"pref_loc":loc})
@@ -269,8 +269,51 @@ async def get_centre_details(loc):
     noOfPendingVer = user_collection.count_documents({"pref_loc": loc,"status":0,"upi":{'$ne': None}})
     return {"loc":loc,"No of Registrations": noOfReg, "No of Paid Users": noOfPaid,"No of Pending Payment":noOfPendingPay,"No of Pending Payment Verification":noOfPendingVer}
 
-@router.get("/user_via_loc/{loc}",response_model=list[ParticipantModelLite])
-async def get_user_details_via_loc(loc):
+
+@router.get("/csv/",tags={"Admin"})
+async def get_csv():
+    users= user_collection.find()
+    data=list(users)
+
+    participants = []
+    for user in data:
+        participant = ParticipantModelOut(**user)
+        participants.append(participant)
+    df = pandas.DataFrame([p.dict() for p in participants])
+
+    # Convert DataFrame to CSV
+    csv_data = df.to_csv(index=False)
+
+    # Create a Response object with the CSV data
+    response = Response(content=csv_data, media_type="text/csv")
+
+    # Set the filename for the downloaded file
+    response.headers["Content-Disposition"] = "attachment; filename=All-Registrations.csv"
+
+    return response
+
+
+ 
+
+@router.get("/csv/{loc}",tags={"Admin"})
+async def get_pending_user_via_loc(loc):
     loc= prefLoc.ekm if loc[0:5].lower()=="kochi" else(prefLoc.tvm if loc[0].lower()=="t" else prefLoc.kzh)
-    user = user_collection.find({"pref_loc":loc,"status": 0,"upi":None})
-    return list(user)
+    users= user_collection.find({"pref_loc":loc,"status":0,"upi":None})
+    data=list(users)
+
+    participants = []
+    for user in data:
+        participant = ParticipantModelOut(**user)
+        participants.append(participant)
+    df = pandas.DataFrame([p.dict() for p in participants])
+
+    # Convert DataFrame to CSV
+    csv_data = df.to_csv(index=False)
+
+    # Create a Response object with the CSV data
+    response = Response(content=csv_data, media_type="text/csv")
+
+    # Set the filename for the downloaded file
+    response.headers["Content-Disposition"] = f'attachment; filename={loc.value}-Pending-Payment.csv'
+
+    return response
