@@ -268,3 +268,9 @@ async def get_centre_details(loc):
     noOfPendingPay=user_collection.count_documents({"pref_loc": loc,"status":0,"upi":None})
     noOfPendingVer = user_collection.count_documents({"pref_loc": loc,"status":0,"upi":{'$ne': None}})
     return {"loc":loc,"No of Registrations": noOfReg, "No of Paid Users": noOfPaid,"No of Pending Payment":noOfPendingPay,"No of Pending Payment Verification":noOfPendingVer}
+
+@router.get("/user_via_loc/{loc}",response_model=list[ParticipantModelLite])
+async def get_user_details_via_loc(loc):
+    loc= prefLoc.ekm if loc[0:5].lower()=="kochi" else(prefLoc.tvm if loc[0].lower()=="t" else prefLoc.kzh)
+    user = user_collection.find({"pref_loc":loc,"status": 0,"upi":None})
+    return list(user)
