@@ -53,7 +53,7 @@ def send_mail_link(email_to,username,loc):
     message['Subject'] = 'Cognosco login credentials'
 
     # Add the username and password to the message
-    body = f'Dear {username}\nYour Payment has been verified\nJoin the whatsapp group through the link given below.\n{"https://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS" if loc==prefLoc.ekm else( "https://chat.whatsapp.com/CZYCPnbIYW39Kmkj3Zehsv" if loc==prefLoc.tvm else "https://chat.whatsapp.com/BwY2rRowvL10ZCIlrU2f9i") }'
+    body = f'Dear {username}\nYour Payment has been verified\nLogin to https://cognosco.vercel.app to Download your hall ticket\nJoin the whatsapp group through the link given below.\n{"https://chat.whatsapp.com/HacGrs1p4h56I84MMt3bkS" if loc==prefLoc.ekm else( "https://chat.whatsapp.com/CZYCPnbIYW39Kmkj3Zehsv" if loc==prefLoc.tvm else "https://chat.whatsapp.com/BwY2rRowvL10ZCIlrU2f9i") }'
     message.attach(MIMEText(body, 'plain'))
 
     # Send the email
