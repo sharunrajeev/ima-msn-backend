@@ -21,6 +21,8 @@ class PaymentModel(BaseModel):
                 "signature": "9ef4dffbfd84f1318f6739a3ce19f9d85851857ae648f114332d8401e0949a3d",  
             }
         }
+
+ 
 class ParticipantModel(BaseModel):
     name: str = Field(...)
     place: str = Field(...)
@@ -111,6 +113,14 @@ class ParticipantModelLite(BaseModel):
 
             }
         }
+class RankModel(BaseModel):
+   reg_no:str=Field(...)
+   name:str=Field(...)
+   tot_right:int=Field(...)
+   tot_wrong:int=Field(...)
+   tot_marks:int=Field(...)
+   rank:int=Field(...)
+   phno:int=Field(...)
 
 class Token(BaseModel):
     access_token: str 
