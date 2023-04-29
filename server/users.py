@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status,Response
 from fastapi.encoders import jsonable_encoder
 import secrets,json,pandas
 from dotenv import load_dotenv
-from .models import ParticipantModel, ParticipantModelOut, ParticipantModelLite, Token, TokenData, prefLoc
+from .models import ParticipantModel, ParticipantModelOut, ParticipantModelLite, Token, TokenData, prefLoc,RankModel
 from passlib.context import CryptContext
 import re
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -26,7 +26,7 @@ MAIL_ID = os.environ.get("MAIL_ID")
 
 
 user_collection = database[COLLECTION_NAME]
-
+rank_collection=database["ranks"]
 
 def decode_token(token: str = Depends(oauth2_scheme)):
     try:
@@ -293,7 +293,7 @@ async def get_csv():
     return response
 
 
- 
+
 
 @router.get("/csv/{loc}",tags={"Admin"})
 async def get_pending_user_via_loc(loc):
@@ -317,3 +317,16 @@ async def get_pending_user_via_loc(loc):
     response.headers["Content-Disposition"] = f'attachment; filename={loc.value}-Pending-Payment.csv'
 
     return response
+
+@router.get("/rank/{phone}",response_model=RankModel) 
+async def get_user_rank(phone):
+    rank=rank_collection.find_one({"phno":int(phone)})
+    if not rank:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No Details Found",
+        )
+    return rank
+
+
+
