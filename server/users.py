@@ -318,7 +318,7 @@ async def get_pending_user_via_loc(loc):
 
     return response
 
-@router.get("/rank/{phone}",response_model=RankModel) 
+@router.get("/rank",response_model=RankModel) 
 async def get_user_rank(phone):
     rank=rank_collection.find_one({"phno":int(phone)})
     if not rank:
